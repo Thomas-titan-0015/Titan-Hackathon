@@ -1,0 +1,264 @@
+# Tanishq Luxury Jewelry E-Commerce Platform
+## Full Project Documentation
+
+### Project Overview
+Tanishq is a comprehensive luxury jewelry e-commerce platform built for a hackathon. It features AI-powered product recommendations, personalized user experiences, admin dashboard, and a complete shopping workflow.
+
+### Tech Stack
+- **Backend**: Python 3.13, FastAPI, SQLAlchemy, SQLite
+- **Frontend**: Vanilla HTML/CSS/JavaScript (no frameworks)
+- **AI**: OpenAI SDK with Titan AI Gateway integration
+- **Authentication**: JWT tokens, bcrypt password hashing
+- **SMS**: Fast2SMS API for phone verification
+- **Deployment**: Single-server architecture (FastAPI serves both API and static files)
+
+### Key Features
+
+#### User Features
+- **Product Catalog**: Browse jewelry by categories (Rings, Necklaces, Earrings, Bracelets, Pendants, Bangles)
+- **AI Chatbot**: Conversational jewelry consultant powered by Titan AI Gateway
+- **Personalized Recommendations**: AI-driven product suggestions based on user preferences
+- **User Authentication**: Email/password login with OTP verification
+- **Phone Verification**: SMS OTP for enhanced security
+- **Profile Management**: Complete user profiles with DOB/anniversary tracking
+- **Shopping Cart & Wishlist**: Full e-commerce functionality
+- **Guest Checkout**: Shop without registration
+- **Order Management**: Complete order lifecycle
+- **Promo Codes**: Discount system
+
+#### Admin Features
+- **Dashboard**: Comprehensive admin panel with analytics
+- **User Management**: View all users and their activity
+- **Session Analytics**: Chat session monitoring
+- **Recommendation Tracking**: AI recommendation performance
+- **Product Management**: Full CRUD operations (via database)
+
+#### AI Features
+- **Intelligent Chatbot**: Context-aware conversations using Titan AI Gateway
+- **Preference Learning**: Tracks user browsing patterns
+- **Personalized Categories**: Reorders category grid based on user interests
+- **Smart Recommendations**: AI-powered product suggestions
+- **Conversation History**: Persistent chat sessions
+
+### Database Schema
+
+#### Users Table
+- id (Primary Key)
+- name, email, password_hash
+- role (user/admin)
+- email_verified, phone, phone_verified
+- date_of_birth, anniversary_date
+- created_at, last_seen, segment
+
+#### Items Table (Products)
+- id (Primary Key)
+- name, category, subcategory
+- description, price, original_price
+- image_url, rating, reviews_count
+- in_stock, featured, attributes (JSON)
+
+#### Sessions Table (Chat Sessions)
+- id (Primary Key)
+- user_id (Foreign Key)
+- started_at, path, message_count
+
+#### Messages Table (Chat History)
+- id (Primary Key)
+- session_id (Foreign Key)
+- role (user/assistant), content, timestamp
+- intent, constraints (JSON), item_ids_shown
+
+#### Preferences Table (User Preferences)
+- id (Primary Key)
+- user_id (Foreign Key, Unique)
+- categories, styles, past_likes, past_dislikes (JSON)
+
+#### Cart/Wishlist/Order Tables
+- Standard e-commerce relationships with foreign keys
+
+### API Endpoints
+
+#### Authentication
+- POST /api/auth/login
+- POST /api/auth/register
+- POST /api/auth/verify-otp
+- POST /api/auth/resend-otp
+- POST /api/auth/send-phone-otp
+- POST /api/auth/verify-phone-otp
+- GET /api/auth/me
+- GET /api/auth/profile-completion
+- PUT /api/auth/profile
+- POST /api/auth/track-category
+
+#### Products
+- GET /api/products (with filters: category, price range, featured, search)
+- GET /api/products/categories
+- GET /api/products/{id}
+- GET /api/products/personalized-categories
+- GET /api/products/popup-recommendations
+
+#### Shopping
+- GET/POST /api/cart
+- DELETE /api/cart/{id}
+- GET/POST /api/wishlist
+- DELETE /api/wishlist/{id}
+- POST /api/orders
+- GET /api/orders
+- GET /api/orders/promo-info
+
+#### Chat
+- POST /api/chat
+- POST /api/chat/feedback
+
+#### Dashboard (Admin Only)
+- GET /api/dashboard/overview
+- GET /api/dashboard/sessions
+- GET /api/dashboard/conversations
+- GET /api/dashboard/users
+- GET /api/dashboard/recommendation-stats
+
+### AI Integration
+
+#### Titan AI Gateway
+- Base URL: https://ai.titan.in/gateway
+- Model: azure/gpt-5-nano
+- Authentication: JWT Bearer token
+- Fallback: Direct OpenAI API
+
+#### Chatbot Flow
+1. Router Agent: Determines conversation path (preference/new user)
+2. Need-State Agent: Gathers user requirements
+3. Preference Agent: Retrieves personalized recommendations
+4. Recommendation Agent: Finds matching products
+5. OpenAI Service: Generates natural responses
+
+### Frontend Architecture
+
+#### Core Files
+- index.html: Homepage with hero, categories, featured products
+- catalog.html: Product browsing with filters
+- product.html: Individual product pages
+- cart.html/wishlist.html: Shopping functionality
+- login.html/register.html: Authentication
+- dashboard.html: Admin panel
+- profile.html: User profile management
+
+#### JavaScript Modules
+- config.js: API configuration
+- api.js: All API wrapper functions
+- app.js: Homepage logic
+- catalog.js: Product browsing
+- chatUI.js: Chatbot interface
+- dashboardUI.js: Admin dashboard
+- popup.js: Email/phone opt-in popups
+
+#### CSS
+- main.css: Core styles and responsive design
+- chat.css: Chatbot styling
+- dashboard.css: Admin panel styles
+- login.css: Authentication forms
+
+### Security Features
+- API Key Middleware: Protects all /api/ routes
+- JWT Authentication: Stateless token-based auth
+- Password Hashing: bcrypt with salt
+- CORS Configuration: Controlled cross-origin access
+- Input Validation: Pydantic models
+- SQL Injection Prevention: SQLAlchemy ORM
+
+### Performance Optimizations
+- Lazy Loading: Images load on demand
+- Session Storage: Popup states persist
+- Local Storage: Auth tokens and guest IDs
+- Database Indexing: Optimized queries
+- Static File Caching: Browser caching headers
+
+### Deployment Options
+- **Development**: Local FastAPI server
+- **Production**: Render, Railway, Azure App Service
+- **Quick Demo**: ngrok tunneling for public access
+
+### Environment Variables
+```
+JWT_SECRET="pure-jewelry-jwt-secret-key-2026-hackathon"
+API_SECRET_KEY="pure-api-x8k2m9p4q7w3"
+TITAN_AI_KEY="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+AI_GATEWAY="https://ai.titan.in/gateway"
+FAST2SMS_KEY="your-fast2sms-key"  # Optional for SMS
+SMTP_HOST="smtp.gmail.com"        # Optional for email
+SMTP_PORT="587"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+```
+
+### Demo Credentials
+- **Admin**: admin@tanishq.com / Admin@123
+- **User**: priya@tanishq.com / User@123
+- **User**: rahul@tanishq.com / User@123
+
+### File Structure
+```
+backend/
+├── app/
+│   ├── main.py              # FastAPI app & static file serving
+│   ├── db/
+│   │   ├── database.py      # SQLAlchemy setup
+│   │   └── models.py        # Database models
+│   ├── routers/
+│   │   ├── auth.py          # Authentication endpoints
+│   │   ├── products.py      # Product endpoints
+│   │   ├── cart.py          # Shopping cart
+│   │   ├── wishlist.py      # Wishlist
+│   │   ├── orders.py        # Order management
+│   │   ├── chat.py          # AI chatbot
+│   │   └── dashboard.py     # Admin dashboard
+│   ├── agents/              # AI conversation agents
+│   ├── services/
+│   │   └── openai_service.py # AI integration
+│   └── schemas/             # Pydantic models
+├── requirements.txt         # Python dependencies
+├── .env                     # Environment variables
+└── seed.py                  # Database seeding
+
+frontend/
+├── index.html               # Homepage
+├── catalog.html             # Product catalog
+├── product.html             # Product details
+├── cart.html                # Shopping cart
+├── wishlist.html            # Wishlist
+├── login.html               # Login page
+├── register.html            # Registration
+├── dashboard.html           # Admin dashboard
+├── profile.html             # User profile
+├── css/
+│   ├── main.css             # Core styles
+│   ├── chat.css             # Chatbot styles
+│   ├── dashboard.css        # Admin styles
+│   └── login.css            # Auth styles
+└── js/
+    ├── config.js            # API config
+    ├── api.js               # API wrappers
+    ├── app.js               # Homepage logic
+    ├── catalog.js           # Catalog logic
+    ├── chatUI.js            # Chatbot UI
+    ├── dashboardUI.js       # Dashboard UI
+    ├── popup.js             # Popups
+    └── product.js           # Product pages
+```
+
+### Development Notes
+- All frontend files are static and served by FastAPI
+- No build process required (vanilla HTML/CSS/JS)
+- Database auto-creates on startup
+- AI gateway provides conversational intelligence
+- SMS verification uses Fast2SMS (falls back to console logging)
+- Admin dashboard shows real-time analytics
+- Guest sessions supported for anonymous shopping
+
+### Future Enhancements
+- Payment gateway integration
+- Email notifications
+- Advanced analytics
+- Mobile app
+- Multi-language support
+- Advanced AI features (image recognition, style matching)

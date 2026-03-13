@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Tanishq</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="index.html" class="logo">Tanishq<span class="logo-dot">.</span></a>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="catalog.html" class="nav-link">Collections</a>
+            <a href="cart.html" class="nav-link">Cart</a>
+            <a href="wishlist.html" class="nav-link">Wishlist</a>
+            <span id="authLinks"></span>
+        </nav>
+    </div>
+</header>
+
+<section class="section">
+    <div class="container">
+        <h1 class="page-title">Admin Dashboard</h1>
+
+        <div class="dash-tabs">
+            <button class="dash-tab active" data-tab="overview">Overview</button>
+            <button class="dash-tab" data-tab="sessions">Sessions</button>
+            <button class="dash-tab" data-tab="conversations">Conversations</button>
+            <button class="dash-tab" data-tab="users">Users</button>
+            <button class="dash-tab" data-tab="recommendations">Recommendations</button>
+        </div>
+
+        <div class="dash-panel active" id="panel-overview">
+            <div class="kpi-grid" id="kpiGrid"></div>
+        </div>
+
+        <div class="dash-panel" id="panel-sessions">
+            <div class="table-wrap"><table class="dash-table"><thead><tr><th>ID</th><th>User</th><th>Agent Path</th><th>Messages</th><th>Started</th><th>Actions</th></tr></thead><tbody id="sessionsBody"></tbody></table></div>
+        </div>
+
+        <div class="dash-panel" id="panel-conversations">
+            <h3 id="convTitle" style="margin-bottom:16px;font-family:var(--font-heading);">Select a session to view</h3>
+            <div id="convMessages" class="conv-timeline"></div>
+        </div>
+
+        <div class="dash-panel" id="panel-users">
+            <div class="table-wrap"><table class="dash-table"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Segment</th><th>Last Seen</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+        </div>
+
+        <div class="dash-panel" id="panel-recommendations">
+            <div class="table-wrap"><table class="dash-table"><thead><tr><th>Session</th><th>Shown</th><th>Clicked</th><th>Dismissed</th><th>CTR</th></tr></thead><tbody id="recBody"></tbody></table></div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-brand"><span class="logo">Tanishq<span class="logo-dot">.</span></span></div>
+        <div class="footer-copy">&copy; 2026 Tanishq — A Titan Company. All rights reserved.</div>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/dashboardUI.js"></script>
+</body>
+</html>

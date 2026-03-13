@@ -1,0 +1,164 @@
+# Tanishq Jewelry E-Commerce Platform
+## Setup and Run Instructions
+
+### Prerequisites
+- Python 3.13 or higher
+- Windows/Linux/Mac
+- Internet connection (for AI gateway and SMS)
+
+### Step 1: Install Dependencies
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### Step 2: Configure Environment
+Create `.env` file in `backend/` directory:
+```
+JWT_SECRET="pure-jewelry-jwt-secret-key-2026-hackathon"
+API_SECRET_KEY="pure-api-x8k2m9p4q7w3"
+TITAN_AI_KEY="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+AI_GATEWAY="https://ai.titan.in/gateway"
+FAST2SMS_KEY="your-fast2sms-key"  # Optional - for real SMS
+```
+
+### Step 3: Start the Server
+```bash
+cd backend
+py -m uvicorn app.main:app --reload --port 8000
+```
+
+### Step 4: Open in Browser
+Navigate to: `http://localhost:8000`
+
+### Step 5: Test the Application
+
+#### User Journey
+1. **Browse Products**: Click categories or search
+2. **AI Chatbot**: Click the 💎 icon for personalized recommendations
+3. **Register/Login**:
+   - Click "Sign In" in top navigation
+   - Register with email (OTP sent to console if no SMTP)
+   - Login with credentials
+4. **Phone Verification** (Optional):
+   - Popup appears for logged-in users without verified phone
+   - Enter phone number → Receive OTP → Verify
+5. **Shopping**:
+   - Add items to cart/wishlist
+   - Use promo codes at checkout
+   - Place orders (guest or logged-in)
+
+#### Admin Access
+- Login with: `admin@tanishq.com` / `Admin@123`
+- Access dashboard at: `http://localhost:8000/dashboard.html`
+- View analytics, user management, chat sessions
+
+### Demo Credentials
+- **Admin**: admin@tanishq.com / Admin@123
+- **User**: priya@tanishq.com / User@123
+- **User**: rahul@tanishq.com / User@123
+
+### Key URLs
+- **Home**: http://localhost:8000
+- **Catalog**: http://localhost:8000/catalog.html
+- **Login**: http://localhost:8000/login.html
+- **Dashboard**: http://localhost:8000/dashboard.html
+- **Profile**: http://localhost:8000/profile.html
+
+### Troubleshooting
+
+#### Server Won't Start
+- Check Python version: `python --version` (should be 3.13+)
+- Install missing packages: `pip install fastapi uvicorn sqlalchemy pydantic python-dotenv openai bcrypt pyjwt httpx`
+- Check port 8000 is free: `netstat -ano | findstr :8000`
+
+#### AI Chatbot Not Working
+- Check Titan AI Gateway connection in server logs
+- Verify TITAN_AI_KEY in .env file
+- Fallback uses OpenAI API if gateway fails
+
+#### SMS OTP Not Sending
+- Add FAST2SMS_KEY to .env for real SMS
+- Without key, OTP prints to server console
+- Check server logs for SMS errors
+
+#### Database Issues
+- Delete `hackathon.db` file to reset
+- Server will auto-create fresh database on restart
+
+#### Frontend Not Loading
+- Ensure opening `http://localhost:8000` (not file://)
+- Check browser console for CORS errors
+- Verify static files are served
+
+### Development Mode
+The server runs with `--reload` flag, so changes to Python files auto-restart the server.
+
+### Production Deployment
+
+#### Option 1: ngrok (Quick Public Access)
+```bash
+# Install ngrok
+choco install ngrok  # or download from ngrok.com
+
+# Start server
+py -m uvicorn app.main:app --port 8000
+
+# In another terminal
+ngrok http 8000
+```
+Share the ngrok URL (e.g., https://abc123.ngrok-free.app)
+
+#### Option 2: Render.com
+1. Push code to GitHub
+2. Create new Web Service on Render
+3. Build Command: `pip install -r requirements.txt`
+4. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. Add environment variables in Render dashboard
+
+#### Option 3: Railway.app
+1. Connect GitHub repository
+2. Railway auto-detects Python project
+3. Add environment variables
+4. Deploy automatically
+
+### File Structure Overview
+```
+Hackathon/
+├── backend/                 # Python FastAPI server
+│   ├── app/
+│   │   ├── main.py         # Main application
+│   │   ├── db/             # Database models
+│   │   ├── routers/        # API endpoints
+│   │   ├── agents/         # AI conversation logic
+│   │   ├── services/       # External integrations
+│   │   └── schemas/        # Data validation
+│   ├── requirements.txt    # Python dependencies
+│   ├── .env               # Environment config
+│   └── seed.py            # Database seeding
+└── frontend/               # Static HTML/CSS/JS
+    ├── *.html             # Pages
+    ├── css/               # Stylesheets
+    └── js/                # JavaScript modules
+```
+
+### Quick Commands
+```bash
+# Start server
+cd backend && py -m uvicorn app.main:app --reload --port 8000
+
+# Reset database
+rm backend/hackathon.db
+
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Check server health
+curl http://localhost:8000/api/health
+```
+
+### Support
+- Check server console for error messages
+- Verify all environment variables are set
+- Ensure port 8000 is not blocked by firewall
+- For AI issues, check Titan Gateway connectivity

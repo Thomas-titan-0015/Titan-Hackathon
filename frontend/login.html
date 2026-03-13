@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Tanishq</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-inner">
+        <a href="index.html" class="logo">Tanishq<span class="logo-dot">.</span></a>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="catalog.html" class="nav-link">Collections</a>
+            <span id="authLinks"></span>
+        </nav>
+    </div>
+</header>
+
+<section class="section login-section">
+    <div class="container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title" id="authTitle">Sign In</h1>
+                <p class="auth-subtitle" id="authSubtitle">Welcome back to Tanishq</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group" id="nameGroup" style="display:none">
+                    <label>Full Name</label>
+                    <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email" required>
+                </div>
+                <div class="form-group" id="passwordGroup">
+                    <label>Password</label>
+                    <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="current-password" required>
+                </div>
+                <div class="form-group" id="otpGroup" style="display:none">
+                    <label>Enter OTP sent to your email</label>
+                    <input type="text" id="otpInput" placeholder="6-digit OTP" maxlength="6" autocomplete="one-time-code">
+                    <button type="button" id="resendOtpBtn" class="link-btn" style="margin-top:8px;font-size:.82rem">Resend OTP</button>
+                </div>
+                <div id="authError" class="auth-error" style="display:none"></div>
+                <button type="submit" class="btn-primary full-width" id="authBtn">Sign In</button>
+            </form>
+
+            <div class="auth-switch">
+                <span id="switchText">Don't have an account?</span>
+                <button id="switchBtn" class="link-btn">Create Account</button>
+            </div>
+
+            <div class="demo-creds">
+                <p class="demo-title">Demo Credentials</p>
+                <div class="cred-row"><span class="cred-label">Admin:</span> admin@tanishq.com / Admin@123</div>
+                <div class="cred-row"><span class="cred-label">User:</span> priya@tanishq.com / User@123</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-brand"><span class="logo">Tanishq<span class="logo-dot">.</span></span></div>
+        <div class="footer-copy">&copy; 2026 Tanishq — A Titan Company. All rights reserved.</div>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+(function(){
+    let mode = 'login'; // 'login' | 'register' | 'otp'
+    let pendingEmail = '';
+
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('emailInput');
+    const passInput = document.getElementById('passwordInput');
+    const nameInput = document.getElementById('nameInput');
+    const nameGroup = document.getElementById('nameGroup');
+    const passwordGroup = document.getElementById('passwordGroup');
+    const otpGroup = document.getElementById('otpGroup');
+    const otpInput = document.getElementById('otpInput');
+    const resendBtn = document.getElementById('resendOtpBtn');
+    const authTitle = document.getElementById('authTitle');
+    const authSubtitle = document.getElementById('authSubtitle');
+    const authBtn = document.getElementById('authBtn');
+    const switchText = document.getElementById('switchText');
+    const switchBtn = document.getElementById('switchBtn');
+    const authError = document.getElementById('authError');
+
+    function setMode(newMode) {
+        mode = newMode;
+        authError.style.display = 'none';
+
+        if (mode === 'login') {
+            authTitle.textContent = 'Sign In';
+            authSubtitle.textContent = 'Welcome back to Tanishq';
+            authBtn.textContent = 'Sign In';
+            switchText.textContent = "Don't have an account?";
+            switchBtn.textContent = 'Create Account';
+            nameGroup.style.display = 'none';
+            passwordGroup.style.display = 'block';
+            otpGroup.style.display = 'none';
+            nameInput.required = false;
+            passInput.required = true;
+            emailInput.disabled = false;
+            switchBtn.style.display = 'inline';
+        } else if (mode === 'register') {
+            authTitle.textContent = 'Create Account';
+            authSubtitle.textContent = 'Join the Tanishq experience';
+            authBtn.textContent = 'Create Account';
+            switchText.textContent = 'Already have an account?';
+            switchBtn.textContent = 'Sign In';
+            nameGroup.style.display = 'block';
+            passwordGroup.style.display = 'block';
+            otpGroup.style.display = 'none';
+            nameInput.required = true;
+            passInput.required = true;
+            emailInput.disabled = false;
+            switchBtn.style.display = 'inline';
+        } else if (mode === 'otp') {
+            authTitle.textContent = 'Verify Email';
+            authSubtitle.textContent = `OTP sent to ${pendingEmail}`;
+            authBtn.textContent = 'Verify OTP';
+            switchText.textContent = '';
+            switchBtn.style.display = 'none';
+            nameGroup.style.display = 'none';
+            passwordGroup.style.display = 'none';
+            updatesGroup.style.display = 'none';
+            otpGroup.style.display = 'block';
+            nameInput.required = false;
+            passInput.required = false;
+            emailInput.disabled = true;
+            otpInput.focus();
+        }
+    }
+
+    switchBtn.addEventListener('click', () => {
+        setMode(mode === 'login' ? 'register' : 'login');
+    });
+
+    resendBtn.addEventListener('click', async () => {
+        if (!pendingEmail) return;
+        resendBtn.disabled = true;
+        resendBtn.textContent = 'Sending...';
+        try {
+            await API.resendOTP(pendingEmail);
+            showToast('OTP resent to your email');
+        } catch (e) {
+            authError.textContent = e.message;
+            authError.style.display = 'block';
+        } finally {
+            resendBtn.disabled = false;
+            resendBtn.textContent = 'Resend OTP';
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        authError.style.display = 'none';
+        authBtn.disabled = true;
+        authBtn.textContent = 'Please wait...';
+
+        try {
+            if (mode === 'login') {
+                const res = await fetch(CONFIG.API_BASE + '/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': CONFIG.API_KEY },
+                    body: JSON.stringify({ email: emailInput.value, password: passInput.value })
+                });
+                if (!res.ok) { const err = await res.json(); throw new Error(err.detail || 'Login failed'); }
+                const data = await res.json();
+                AUTH.save(data.access_token, data.user);
+                window.location.href = 'index.html';
+
+            } else if (mode === 'register') {
+                const res = await fetch(CONFIG.API_BASE + '/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': CONFIG.API_KEY },
+                    body: JSON.stringify({
+                        name: nameInput.value,
+                        email: emailInput.value,
+                        password: passInput.value
+                    })
+                });
+                if (!res.ok) { const err = await res.json(); throw new Error(err.detail || 'Registration failed'); }
+                const data = await res.json();
+                pendingEmail = emailInput.value;
+                showToast(data.message || 'OTP sent to your email');
+                setMode('otp');
+
+            } else if (mode === 'otp') {
+                const otp = otpInput.value.trim();
+                if (otp.length !== 6) throw new Error('Please enter the 6-digit OTP');
+                const res = await fetch(CONFIG.API_BASE + '/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': CONFIG.API_KEY },
+                    body: JSON.stringify({ email: pendingEmail, otp })
+                });
+                if (!res.ok) { const err = await res.json(); throw new Error(err.detail || 'Verification failed'); }
+                const data = await res.json();
+                AUTH.save(data.access_token, data.user);
+                showToast('Email verified! Welcome to Tanishq');
+                window.location.href = 'index.html';
+            }
+        } catch (err) {
+            authError.textContent = err.message;
+            authError.style.display = 'block';
+        } finally {
+            authBtn.disabled = false;
+            if (mode === 'login') authBtn.textContent = 'Sign In';
+            else if (mode === 'register') authBtn.textContent = 'Create Account';
+            else authBtn.textContent = 'Verify OTP';
+        }
+    });
+
+    if (AUTH.isLoggedIn()) window.location.href = 'index.html';
+})();
+</script>
+</body>
+</html>
